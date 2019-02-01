@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/Users/Ninja/Dropbox/Sviluppo/Eclipse/Java/LibreriaQx7Java/Exernal library/jxl.jar"/>
-	<classpathentry kind="lib" path="/Users/Ninja/Dropbox/Sviluppo/Eclipse/Java/LibreriaQx7Java/Exernal library/iText-5.0.5.jar"/>
-	<classpathentry kind="lib" path="/Users/Ninja/Dropbox/Sviluppo/Eclipse/Java/LibreriaQx7Java/Exernal library/sqlite-jdbc-3.23.1.jar"/>
+	<classpathentry kind="lib" path="./external library/iText-5.0.5.jar"/>
+	<classpathentry kind="lib" path="./external library/jxl.jar"/>
+	<classpathentry kind="lib" path="./external library/sqlite-jdbc-3.23.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
