@@ -18,6 +18,8 @@ import javax.swing.JPanel;
  * @author Domenico della Peruta
  ******************************************************************************/
 public class FilePDF {
+	
+	
     
     //TIPO CARATTERI
     public static final String COURIER = FontFactory.COURIER;
@@ -126,10 +128,13 @@ public class FilePDF {
         }
     }
     
+    
+    
     public void aggiungiTabella( ArrayList<String> testo,float[] colonne,String tipoCaratteri, int grandezza,int stile,boolean bordi){
         try {
             if(colonne != null && testo != null){
                 PdfPTable tabella = new PdfPTable(colonne.length);
+                tabella.setWidthPercentage(100f);
                 tabella.setTotalWidth(colonne); 
                 if(!bordi)
                     tabella.getDefaultCell().setBorder(PdfPCell.NO_BORDER);
@@ -146,6 +151,35 @@ public class FilePDF {
                     tabella.addCell(cella);
                 }
                 tabella.completeRow();
+                tabella.setHorizontalAlignment(ALLINEAMENTO_SINISTRA);
+         
+                
+                d.add(tabella);
+            }
+        } catch (DocumentException ex) {
+            Logger.getLogger(FilePDF.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Aggiungi una tabella personalizzata per celle.
+     * 
+     * @param testo
+     * @param colonne
+     */
+    public void aggiungiTabella( ArrayList<CellaPDF> testo,float[] colonne){
+        try {
+            if(colonne != null && testo != null){
+                PdfPTable tabella = new PdfPTable(colonne.length);
+                tabella.setWidthPercentage(100f);
+                tabella.setTotalWidth(colonne); 
+                
+                for(CellaPDF cella: testo){
+                   tabella.addCell(cella.crea());
+                }
+                tabella.completeRow();
+                tabella.setHorizontalAlignment(ALLINEAMENTO_SINISTRA);
+                
                 d.add(tabella);
             }
         } catch (DocumentException ex) {
@@ -187,5 +221,7 @@ public class FilePDF {
             ex.printStackTrace();
         }
     }
+
+	
 
 }
