@@ -756,14 +756,13 @@ public abstract class AccessoDB implements BaseDati {
         return null;
     }
     
-    
-    public void eliminaTutteLeTuple(Relazione tabella) throws EccezioneBaseDati {
-        if (connessione != null) {
+    public void eliminaTutteLeTuple(Relazione tabella, String condizione) throws EccezioneBaseDati{
+    	if (connessione != null) {
             if (tabella != null) {
                 String nomeTabella = "`" + tabella.nome() + "`";
                 
-                    String SQL = String.format("DELETE FROM %s ", nomeTabella);
-                    
+                String SQL = String.format("DELETE FROM %s %s", nomeTabella, condizione != null ? ("WHERE "+condizione) : "");
+                 
                 try {
                     interrogazione(SQL).executeUpdate();
                 } catch (SQLException ex) {
@@ -777,6 +776,10 @@ public abstract class AccessoDB implements BaseDati {
         } else {
             throw new EccezioneBaseDati("metodo eliminaTutteLeTuple()", "connessione nulla");
         }
+    }
+    
+    public void eliminaTutteLeTuple(Relazione tabella) throws EccezioneBaseDati {
+        this.eliminaTupla(tabella, null); 
     }
     
 }
