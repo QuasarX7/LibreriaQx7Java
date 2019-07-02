@@ -618,10 +618,10 @@ public abstract class AccessoDB implements BaseDati {
                                     SQL += ", ";
                                 }
                                 String nome = "`" + colonna.nome() + "`";
-                                if (nome == null) {
+                                if (colonna.nome() == null) {
                                     throw new EccezioneBaseDati("metodo generaTabella()", "nome attributo nullo");
                                 }
-                                if (nome.length() == 0) {
+                                if (colonna.nome().length() == 0) {
                                     throw new EccezioneBaseDati("metodo generaTabella()", "attributo senza nome");
                                 }
                                 if (colonna.tipo() == null) {
@@ -779,7 +779,7 @@ public abstract class AccessoDB implements BaseDati {
     }
     
     public void eliminaTutteLeTuple(Relazione tabella) throws EccezioneBaseDati {
-        this.eliminaTupla(tabella, null); 
+    	eliminaTutteLeTuple(tabella, null); 
     }
     
 }
