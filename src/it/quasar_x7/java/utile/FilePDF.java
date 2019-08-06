@@ -1,12 +1,14 @@
 package it.quasar_x7.java.utile;
 
 import com.itextpdf.text.*;
+import com.itextpdf.text.html.simpleparser.HTMLWorker;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -72,7 +74,6 @@ public class FilePDF {
     private Document d;
 
     public FilePDF(String file){
-        
         try {
             d = new Document(PageSize.A4);
             PdfWriter.getInstance(d, new FileOutputStream(file));
@@ -107,6 +108,27 @@ public class FilePDF {
         }
     } 
 
+    /**
+     * Aggiunge codice HTML alla pagina.
+     * 
+     * @param codice
+     */
+    public void aggiungiHTML(String codice) {
+        try {
+        	Paragraph paragrafo=new Paragraph();
+        	ArrayList<Element> listaTag = HTMLWorker.parseToList(new StringReader(codice), null);
+            for (int k = 0; k < listaTag.size(); ++k){
+                paragrafo.add((Element) listaTag.get(k));
+            }
+			d.add(paragrafo);
+		} catch (DocumentException e) {
+			System.out.println("errore aggiunta codice HTML a documento PDF");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("errore aggiunta codice HTML a documento PDF");
+			e.printStackTrace();
+		}
+    }
         
     /**************************************************
      * 
@@ -119,7 +141,7 @@ public class FilePDF {
      **************************************************/
     public void aggiungi(String testo,String tipoCaratteri, int grandezza,int stile,int allineamento, BaseColor colore){
          try {
-            Paragraph p = new Paragraph(testo,FontFactory.getFont(tipoCaratteri,  grandezza, stile, colore));
+        	 Paragraph p = new Paragraph(testo,FontFactory.getFont(tipoCaratteri,  grandezza, stile, colore));
             p.setAlignment(allineamento);
             d.add(p);
         } catch (DocumentException ex) {
@@ -128,7 +150,13 @@ public class FilePDF {
         }
     }
     
-    
+    /**
+     * Crea nuova pagina
+     * @return
+     */
+    public boolean nuovaPagina() {
+    	return d.newPage();
+    }
     
     public void aggiungiTabella( ArrayList<String> testo,float[] colonne,String tipoCaratteri, int grandezza,int stile,boolean bordi){
         try {
