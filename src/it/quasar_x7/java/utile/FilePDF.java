@@ -215,10 +215,21 @@ public class FilePDF {
         }
     }
 
-    public void aggiungi(String file_immagine){
+    /**
+     * Aggiungi il nome (e percorso) dell'immagine.
+     * Esempio
+     * <code>
+     * FilePDF file = new FilePDF(nomeFile);
+     * file.aggiungiImmagine("logo.png",30,30,FilePDF.ALLINEAMENTO_CENTRO);
+     * </code>
+     * @param file_immagine
+     */
+    public void aggiungiImmagine(String file_immagine,int lunghezza,int altezza, int allineamento){
         try {
 
             Image immagine = Image.getInstance(file_immagine);
+            immagine.scaleToFit(lunghezza, altezza);
+            immagine.setAlignment(allineamento);
             d.add(immagine);
 
 
