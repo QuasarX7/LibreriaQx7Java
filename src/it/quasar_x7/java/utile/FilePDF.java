@@ -1,15 +1,20 @@
 package it.quasar_x7.java.utile;
 
 import com.itextpdf.text.*;
-import com.itextpdf.text.html.simpleparser.HTMLWorker;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.net.MalformedURLException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,6 +53,7 @@ public class FilePDF {
     public static final int SOTTOLINEATO = Font.UNDERLINE;
     
     //ALLINEAMENTO
+    public static final int ALLINEAMENTO_GIUSTIFICATO = Element.ALIGN_JUSTIFIED;
     public static final int ALLINEAMENTO_CENTRO = Element.ALIGN_CENTER;
     public static final int ALLINEAMENTO_DESTRA = Element.ALIGN_RIGHT;
     public static final int ALLINEAMENTO_SINISTRA = Element.ALIGN_LEFT;
@@ -71,13 +77,14 @@ public class FilePDF {
         VERTICALE,ORIZZONTALE
     };
     
-    private Document d;
+    private Document documento;
+	private PdfWriter pdf;
 
     public FilePDF(String file){
         try {
-            d = new Document(PageSize.A4);
-            PdfWriter.getInstance(d, new FileOutputStream(file));
-            d.open();
+            documento = new Document(PageSize.A4);
+            pdf = PdfWriter.getInstance(documento, new FileOutputStream(file));
+            documento.open();
 
         } catch (FileNotFoundException ex) {
             System.out.println("errore scrittura file pdf");
@@ -91,13 +98,13 @@ public class FilePDF {
     public FilePDF(String file,Orientamento pagina){
         try {
             if(pagina == Orientamento.VERTICALE){
-                d = new Document(PageSize.A4);
-                PdfWriter.getInstance(d, new FileOutputStream(file));
-                d.open();
+                documento = new Document(PageSize.A4);
+                pdf = PdfWriter.getInstance(documento, new FileOutputStream(file));
+                documento.open();
             }else{
-               d = new Document(PageSize.A4.rotate());
-                PdfWriter.getInstance(d, new FileOutputStream(file));
-                d.open(); 
+               documento = new Document(PageSize.A4.rotate());
+                pdf = PdfWriter.getInstance(documento, new FileOutputStream(file));
+                documento.open(); 
             }
             
         } catch (FileNotFoundException ex) {
@@ -114,20 +121,16 @@ public class FilePDF {
      * @param codice
      */
     public void aggiungiHTML(String codice) {
-        try {
-        	Paragraph paragrafo=new Paragraph();
-        	ArrayList<Element> listaTag = HTMLWorker.parseToList(new StringReader(codice), null);
-            for (int k = 0; k < listaTag.size(); ++k){
-                paragrafo.add((Element) listaTag.get(k));
-            }
-			d.add(paragrafo);
-		} catch (DocumentException e) {
-			System.out.println("errore aggiunta codice HTML a documento PDF");
-			e.printStackTrace();
+        	 
+	    XMLWorkerHelper worker = XMLWorkerHelper.getInstance();
+	    InputStream input = new ByteArrayInputStream(codice.getBytes(StandardCharsets.UTF_8));
+	    try {
+			worker.parseXHtml(pdf, documento, input, Charset.forName("UTF-8"));
 		} catch (IOException e) {
 			System.out.println("errore aggiunta codice HTML a documento PDF");
-			e.printStackTrace();
+            e.printStackTrace();
 		}
+        
     }
         
     /**************************************************
@@ -143,7 +146,7 @@ public class FilePDF {
          try {
         	 Paragraph p = new Paragraph(testo,FontFactory.getFont(tipoCaratteri,  grandezza, stile, colore));
             p.setAlignment(allineamento);
-            d.add(p);
+            documento.add(p);
         } catch (DocumentException ex) {
             System.out.println("errore aggiunta stringa a documento PDF");
             ex.printStackTrace();
@@ -155,7 +158,7 @@ public class FilePDF {
      * @return
      */
     public boolean nuovaPagina() {
-    	return d.newPage();
+    	return documento.newPage();
     }
     
     public void aggiungiTabella( ArrayList<String> testo,float[] colonne,String tipoCaratteri, int grandezza,int stile,boolean bordi){
@@ -182,7 +185,7 @@ public class FilePDF {
                 tabella.setHorizontalAlignment(ALLINEAMENTO_SINISTRA);
          
                 
-                d.add(tabella);
+                documento.add(tabella);
             }
         } catch (DocumentException ex) {
             Logger.getLogger(FilePDF.class.getName()).log(Level.SEVERE, null, ex);
@@ -208,7 +211,7 @@ public class FilePDF {
                 tabella.completeRow();
                 tabella.setHorizontalAlignment(ALLINEAMENTO_SINISTRA);
                 
-                d.add(tabella);
+                documento.add(tabella);
             }
         } catch (DocumentException ex) {
             Logger.getLogger(FilePDF.class.getName()).log(Level.SEVERE, null, ex);
@@ -230,7 +233,7 @@ public class FilePDF {
             Image immagine = Image.getInstance(file_immagine);
             immagine.scaleToFit(lunghezza, altezza);
             immagine.setAlignment(allineamento);
-            d.add(immagine);
+            documento.add(immagine);
 
 
         } catch (BadElementException ex) {
@@ -249,12 +252,12 @@ public class FilePDF {
     }
 
     public void chiudi(){
-        d.close();
+        documento.close();
     }
 
     public void aggiungi(JPanel sfondo) {
         try {
-            d.add((Element) sfondo);
+            documento.add((Element) sfondo);
         } catch (DocumentException ex) {
             System.out.println("errore aggiunta pannello a documento PDF");
             ex.printStackTrace();
