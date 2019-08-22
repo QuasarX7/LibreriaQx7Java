@@ -99,13 +99,12 @@ public class FilePDF {
         try {
             if(pagina == Orientamento.VERTICALE){
                 documento = new Document(PageSize.A4);
-                pdf = PdfWriter.getInstance(documento, new FileOutputStream(file));
-                documento.open();
+                
             }else{
                documento = new Document(PageSize.A4.rotate());
-                pdf = PdfWriter.getInstance(documento, new FileOutputStream(file));
-                documento.open(); 
             }
+            pdf = PdfWriter.getInstance(documento, new FileOutputStream(file));
+            documento.open();
             
         } catch (FileNotFoundException ex) {
             System.out.println("errore scrittura file pdf");
@@ -121,13 +120,13 @@ public class FilePDF {
      * @param codice
      */
     public void aggiungiHTML(String codice) {
-        	 
 	    XMLWorkerHelper worker = XMLWorkerHelper.getInstance();
 	    InputStream input = new ByteArrayInputStream(codice.getBytes(StandardCharsets.UTF_8));
 	    try {
 			worker.parseXHtml(pdf, documento, input, Charset.forName("UTF-8"));
+
 		} catch (IOException e) {
-			System.out.println("errore aggiunta codice HTML a documento PDF");
+			//System.out.println("errore aggiunta codice HTML a documento PDF");
             e.printStackTrace();
 		}
         
@@ -249,6 +248,7 @@ public class FilePDF {
             System.out.println("errore aggiunta immagine a documento PDF");
             ex.printStackTrace();
         }
+        
     }
 
     public void chiudi(){
